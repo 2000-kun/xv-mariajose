@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XV Años María Jose - Flaco</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap');
+
+        :root {
+            --cream: #F8F4FC;
+            --lilac: #C9A7E0;
+            --deep-lilac: #9B7BB8;
+            --soft-purple: #B39DDB;
+            --gold: #C9A96E;
+            --text-dark: #4A374F;
+            --text-soft: #7A6A85;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Mariposas animadas */
+        .butterfly {
+            position: fixed;
+            font-size: 1.5rem;
+            opacity: 0.18;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .butterfly:nth-child(1) { top: 8%; left: 8%; animation-delay: 0s; }
+        .butterfly:nth-child(2) { top: 15%; right: 12%; animation-delay: 1.5s; font-size: 1.3rem; }
+        .butterfly:nth-child(3) { top: 35%; left: 3%; animation-delay: 3s; font-size: 1.6rem; }
+        .butterfly:nth-child(4) { top: 55%; right: 5%; animation-delay: 0.5s; font-size: 1.4rem; }
+        .butterfly:nth-child(5) { top: 75%; left: 10%; animation-delay: 2.5s; font-size: 1.7rem; }
+        .butterfly:nth-child(6) { top: 85%; right: 15%; animation-delay: 4s; font-size: 1.2rem; }
+        .butterfly:nth-child(7) { top: 45%; left: 50%; animation-delay: 2s; font-size: 1rem; opacity: 0.12; }
+        .butterfly:nth-child(8) { top: 25%; left: 40%; animation-delay: 3.5s; font-size: 1.1rem; opacity: 0.12; }
+        .butterfly:nth-child(9) { top: 65%; right: 40%; animation-delay: 1s; font-size: 1.3rem; opacity: 0.14; }
+        .butterfly:nth-child(10) { top: 5%; left: 55%; animation-delay: 4.5s; font-size: 1rem; opacity: 0.12; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Saludo personalizado */
+        .greeting {
+            text-align: center;
+            padding: 3rem 0 1rem;
+        }
+
+        .greeting .label {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            color: var(--gold);
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: lowercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .greeting h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 7vw, 3rem);
+            font-weight: 600;
+            color: var(--deep-lilac);
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .greeting .subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            color: var(--text-soft);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem auto;
+            max-width: 280px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gold);
+        }
+        .divider span {
+            color: var(--gold);
+            font-size: 0.75rem;
+        }
+
+        /* Nombre de quinceañera */
+        .quince {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .quince .name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.1;
+        }
+
+        .quince .years {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            color: var(--deep-lilac);
+            margin-top: 0.3rem;
+        }
+
+        /* Event details card */
+        .details-card {
+            background: var(--white);
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            border-radius: 12px;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(74, 55, 79, 0.06);
+        }
+
+        .details-card h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: var(--deep-lilac);
+            text-align: center;
+            margin-bottom: 1.3rem;
+            font-weight: 600;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(201, 169, 110, 0.15);
+        }
+        .detail-item:last-child { border-bottom: none; }
+
+        .detail-icon {
+            font-size: 1.2rem;
+            width: 2rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .detail-content { flex: 1; }
+
+        .detail-content .label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        .detail-content .value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-top: 0.2rem;
+        }
+
+        .detail-content .note {
+            font-size: 0.78rem;
+            color: var(--text-soft);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        /* Map button */
+        .map-section {
+            text-align: center;
+            padding: 0.5rem 0 1rem;
+        }
+
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--white);
+            color: var(--deep-lilac);
+            text-decoration: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            border: 1.5px solid var(--deep-lilac);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .map-btn:hover {
+            background: var(--deep-lilac);
+            color: var(--white);
+        }
+
+        /* Dress code */
+        .dress-section {
+            background: rgba(201, 167, 224, 0.12);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .dress-section h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--deep-lilac);
+            margin-bottom: 0.8rem;
+        }
+
+        .dress-section p {
+            font-size: 0.9rem;
+            color: var(--text-soft);
+            line-height: 1.6;
+        }
+
+        .dress-tags {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .dress-tag {
+            background: var(--white);
+            border: 1px solid var(--lilac);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--deep-lilac);
+        }
+
+        /* Notes */
+        .notes {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .note-item {
+            font-size: 0.85rem;
+            color: var(--text-soft);
+            margin: 0.5rem 0;
+            font-style: italic;
+        }
+
+        /* RSVP Button */
+        .rsvp-section {
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+
+        .rsvp-btn {
+            display: inline-block;
+            background: var(--deep-lilac);
+            color: var(--white);
+            text-decoration: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(155, 123, 184, 0.3);
+        }
+
+        .rsvp-btn:hover {
+            background: var(--lilac);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(155, 123, 184, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-soft);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        .footer .butterfly-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer .deadline {
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+            color: var(--text-soft);
+        }
+    </style>
+</head>
+<body>
+    <!-- Mariposas decorativas -->
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+    <div class="butterfly">🦋</div>
+
+    <div class="container">
+        <!-- Saludo personalizado -->
+        <header class="greeting">
+            <div class="label">— para ti —</div>
+            <h1>Flaco</h1>
+            <div class="subtitle">Estás invitado(a) a mis XV Años</div>
+        </header>
+
+        <div class="divider"><span>◆</span></div>
+
+        <!-- Nombre de quinceañera -->
+        <div class="quince">
+            <div class="name">María Jose</div>
+            <div class="years">Mis XV Años</div>
+        </div>
+
+        <div class="divider"><span>◆</span></div>
+
+        <!-- Detalles del evento -->
+        <div class="details-card">
+            <h2>Detalles del Evento</h2>
+
+            <div class="detail-item">
+                <div class="detail-icon">📅</div>
+                <div class="detail-content">
+                    <div class="label">Fecha</div>
+                    <div class="value">Sábado, 18 de diciembre de 2026</div>
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon">🕐</div>
+                <div class="detail-content">
+                    <div class="label">Hora</div>
+                    <div class="value">7:30 PM</div>
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon">📍</div>
+                <div class="detail-content">
+                    <div class="label">Lugar</div>
+                    <div class="value">Banquetes Praga</div>
+                    <div class="note">Calle 44 A No. 68 A - 45, Florida Nueva, Medellín</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mapa -->
+        <div class="map-section">
+            <a href="https://www.google.com/maps/search/?api=1&query=Calle+44+A+No+68+A+-+45+Florida+Nueva+Medellin" 
+               class="map-btn" target="_blank">
+                📍 Ver Mapa
+            </a>
+        </div>
+
+        <!-- Código de vestimenta -->
+        <div class="dress-section">
+            <h3>Código de Vestimenta</h3>
+            <p>Negro o Blanco Formal</p>
+            <div class="dress-tags">
+                <span class="dress-tag">🖤 Negro</span>
+                <span class="dress-tag">🤍 Blanco</span>
+                <span class="dress-tag">✨ Formal ✨</span>
+            </div>
+        </div>
+
+        <!-- Notas -->
+        <div class="notes">
+            <p class="note-item">🦋 Lluvia de sobres</p>
+            <p class="note-item">Amamos los niños, pero en esta ocasión déjalos en casa</p>
+        </div>
+
+        <!-- RSVP -->
+        <div class="rsvp-section">
+            <a href="https://wa.me/573017818322?text=Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20A%C3%B1os%20de%20Mar%C3%ADa%20Jose.%20Invitado(a):%20Flaco" 
+               class="rsvp-btn" target="_blank">
+                Confirmar mi asistencia
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span class="butterfly-icon">🦋</span>
+            ¡Los esperamos, Flaco!
+            <div class="deadline">Por favor confirma antes del 1 de diciembre</div>
+        </footer>
+    </div>
+</body>
+</html>

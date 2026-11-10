@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XV Años María Jose - Invitaciones</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap');
+
+        :root {
+            --cream: #F8F4FC;
+            --lilac: #C9A7E0;
+            --deep-lilac: #9B7BB8;
+            --gold: #C9A96E;
+            --text-dark: #4A374F;
+            --text-soft: #7A6A85;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            color: var(--deep-lilac);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-soft);
+            font-size: 0.95rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: var(--white);
+            border: 1px solid rgba(201, 169, 110, 0.3);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+        }
+
+        .stat .number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--deep-lilac);
+            font-weight: 600;
+        }
+
+        .stat .label {
+            font-size: 0.75rem;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .guest-list {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 20px rgba(74, 55, 79, 0.06);
+        }
+
+        .guest-list h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--deep-lilac);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .guest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .guest-link {
+            display: block;
+            padding: 0.6rem 0.8rem;
+            background: rgba(201, 167, 224, 0.1);
+            border-radius: 6px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .guest-link:hover {
+            background: var(--lilac);
+            color: var(--white);
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--deep-lilac);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🦋 Invitaciones XV Años</h1>
+            <p>María Jose — Selecciona un invitado para ver su invitación</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="number">112</div>
+                <div class="label">Invitados</div>
+            </div>
+            <div class="stat">
+                <div class="number">18</div>
+                <div class="label">Dic 2026</div>
+            </div>
+            <div class="stat">
+                <div class="number">7:30</div>
+                <div class="label">PM</div>
+            </div>
+        </div>
+
+        <div class="guest-list">
+            <h2>Lista de Invitados</h2>
+            <div class="guest-grid">
+            <a href="001-laura-mazo.html" class="guest-link">1. Laura Mazo</a>
+            <a href="002-miguel-angel.html" class="guest-link">2. Miguel Angel</a>
+            <a href="003-valeria-miranda.html" class="guest-link">3. Valeria Miranda</a>
+            <a href="004-isabella-serrano.html" class="guest-link">4. Isabella Serrano</a>
+            <a href="005-yiseth.html" class="guest-link">5. Yiseth</a>
+            <a href="006-sara.html" class="guest-link">6. Sara</a>
+            <a href="007-paola.html" class="guest-link">7. Paola</a>
+            <a href="008-wilson.html" class="guest-link">8. Wilson</a>
+            <a href="009-mariajose-r.html" class="guest-link">9. Mariajose R</a>
+            <a href="010-juan-andres-r.html" class="guest-link">10. Juan Andres R</a>
+            <a href="011-john-jairo-r.html" class="guest-link">11. John Jairo R</a>
+            <a href="012-omaira-z.html" class="guest-link">12. Omaira Z</a>
+            <a href="013-alison.html" class="guest-link">13. Alison</a>
+            <a href="014-salome-betancourt.html" class="guest-link">14. Salome Betancourt</a>
+            <a href="015-silvana-arango.html" class="guest-link">15. Silvana Arango</a>
+            <a href="016-nicole-rivera.html" class="guest-link">16. Nicole Rivera</a>
+            <a href="017-sheyla-bedoya.html" class="guest-link">17. Sheyla Bedoya</a>
+            <a href="018-manuela-quintero.html" class="guest-link">18. Manuela Quintero</a>
+            <a href="019-luciana-alzate.html" class="guest-link">19. Luciana Alzate</a>
+            <a href="020-isabela-franco.html" class="guest-link">20. Isabela Franco</a>
+            <a href="021-quiara-quintero.html" class="guest-link">21. Quiara Quintero</a>
+            <a href="022-santiago-quintero.html" class="guest-link">22. Santiago Quintero</a>
+            <a href="023-nicolas.html" class="guest-link">23. Nicolas</a>
+            <a href="024-amanda.html" class="guest-link">24. Amanda</a>
+            <a href="025-paulina.html" class="guest-link">25. Paulina</a>
+            <a href="026-camilo.html" class="guest-link">26. Camilo</a>
+            <a href="027-juan-andres-villa.html" class="guest-link">27. Juan Andres Villa</a>
+            <a href="028-anyi.html" class="guest-link">28. Anyi</a>
+            <a href="029-vanessa.html" class="guest-link">29. Vanessa</a>
+            <a href="030-diego.html" class="guest-link">30. Diego</a>
+            <a href="031-leyla.html" class="guest-link">31. Leyla</a>
+            <a href="032-alonso.html" class="guest-link">32. Alonso</a>
+            <a href="033-yesica.html" class="guest-link">33. Yesica</a>
+            <a href="034-leidy.html" class="guest-link">34. Leidy</a>
+            <a href="035-brayan.html" class="guest-link">35. Brayan</a>
+            <a href="036-celeste.html" class="guest-link">36. Celeste</a>
+            <a href="037-yuri.html" class="guest-link">37. Yuri</a>
+            <a href="038-edwin.html" class="guest-link">38. Edwin</a>
+            <a href="039-valeria.html" class="guest-link">39. Valeria</a>
+            <a href="040-mariangel.html" class="guest-link">40. Mariangel</a>
+            <a href="041-martha.html" class="guest-link">41. Martha</a>
+            <a href="042-hernan.html" class="guest-link">42. Hernan</a>
+            <a href="043-juliana.html" class="guest-link">43. Juliana</a>
+            <a href="044-sindy.html" class="guest-link">44. Sindy</a>
+            <a href="045-david.html" class="guest-link">45. David</a>
+            <a href="046-miguel.html" class="guest-link">46. Miguel</a>
+            <a href="047-juan-jose.html" class="guest-link">47. Juan Jose</a>
+            <a href="048-edilma.html" class="guest-link">48. Edilma</a>
+            <a href="049-manuel.html" class="guest-link">49. Manuel</a>
+            <a href="050-simon-ramirez.html" class="guest-link">50. Simon Ramirez</a>
+            <a href="051-santiago-ramirez.html" class="guest-link">51. Santiago Ramirez</a>
+            <a href="052-susana-ramirez.html" class="guest-link">52. Susana Ramirez</a>
+            <a href="053-luciana-ramirez.html" class="guest-link">53. Luciana Ramirez</a>
+            <a href="054-yefry.html" class="guest-link">54. Yefry</a>
+            <a href="055-antony.html" class="guest-link">55. Antony</a>
+            <a href="056-luisa.html" class="guest-link">56. Luisa</a>
+            <a href="057-diana.html" class="guest-link">57. Diana</a>
+            <a href="058-robert.html" class="guest-link">58. Robert</a>
+            <a href="059-hillary.html" class="guest-link">59. Hillary</a>
+            <a href="060-laura.html" class="guest-link">60. Laura</a>
+            <a href="061-edwin-ramirez.html" class="guest-link">61. Edwin Ramirez</a>
+            <a href="062-enilsa.html" class="guest-link">62. Enilsa</a>
+            <a href="063-fernando.html" class="guest-link">63. Fernando</a>
+            <a href="064-amanda.html" class="guest-link">64. Amanda</a>
+            <a href="065-oscar.html" class="guest-link">65. Oscar</a>
+            <a href="066-patricia.html" class="guest-link">66. Patricia</a>
+            <a href="067-jorge.html" class="guest-link">67. Jorge</a>
+            <a href="068-adela.html" class="guest-link">68. Adela</a>
+            <a href="069-jaime.html" class="guest-link">69. Jaime</a>
+            <a href="070-cristina.html" class="guest-link">70. Cristina</a>
+            <a href="071-mauricio.html" class="guest-link">71. Mauricio</a>
+            <a href="072-ximena.html" class="guest-link">72. Ximena</a>
+            <a href="073-jairo.html" class="guest-link">73. Jairo</a>
+            <a href="074-yurany.html" class="guest-link">74. Yurany</a>
+            <a href="075-salome.html" class="guest-link">75. Salome</a>
+            <a href="076-yuliana.html" class="guest-link">76. Yuliana</a>
+            <a href="077-edwin.html" class="guest-link">77. Edwin</a>
+            <a href="078-juan-david.html" class="guest-link">78. Juan David</a>
+            <a href="079-samuel.html" class="guest-link">79. Samuel</a>
+            <a href="080-irma.html" class="guest-link">80. Irma</a>
+            <a href="081-horacio.html" class="guest-link">81. Horacio</a>
+            <a href="082-adriana.html" class="guest-link">82. Adriana</a>
+            <a href="083-camila.html" class="guest-link">83. Camila</a>
+            <a href="084-sandra-zapata.html" class="guest-link">84. Sandra Zapata</a>
+            <a href="085-alex.html" class="guest-link">85. Alex</a>
+            <a href="086-karen.html" class="guest-link">86. Karen</a>
+            <a href="087-samuel.html" class="guest-link">87. Samuel</a>
+            <a href="088-rosa.html" class="guest-link">88. Rosa</a>
+            <a href="089-carolina.html" class="guest-link">89. Carolina</a>
+            <a href="090-mariana.html" class="guest-link">90. Mariana</a>
+            <a href="091-estefa.html" class="guest-link">91. Estefa</a>
+            <a href="092-michell.html" class="guest-link">92. Michell</a>
+            <a href="093-orfa.html" class="guest-link">93. Orfa</a>
+            <a href="094-emanuel.html" class="guest-link">94. Emanuel</a>
+            <a href="095-daniel.html" class="guest-link">95. Daniel</a>
+            <a href="096-laura.html" class="guest-link">96. Laura</a>
+            <a href="097-dona-martha.html" class="guest-link">97. Doña Martha</a>
+            <a href="098-don-fernando.html" class="guest-link">98. Don Fernando</a>
+            <a href="099-dona-miriam.html" class="guest-link">99. Doña Miriam</a>
+            <a href="100-claudia.html" class="guest-link">100. Claudia</a>
+            <a href="101-anderson.html" class="guest-link">101. Anderson</a>
+            <a href="102-jose-manuel.html" class="guest-link">102. Jose Manuel</a>
+            <a href="103-sandra.html" class="guest-link">103. Sandra</a>
+            <a href="104-milton.html" class="guest-link">104. Milton</a>
+            <a href="105-edison.html" class="guest-link">105. Edison</a>
+            <a href="106-mauricio-miguel.html" class="guest-link">106. Mauricio Miguel</a>
+            <a href="107-sofia.html" class="guest-link">107. Sofia</a>
+            <a href="108-karen.html" class="guest-link">108. Karen</a>
+            <a href="109-cristofer.html" class="guest-link">109. Cristofer</a>
+            <a href="110-matias.html" class="guest-link">110. Matias</a>
+            <a href="111-elena.html" class="guest-link">111. Elena</a>
+            <a href="112-flaco.html" class="guest-link">112. Flaco</a>
+            </div>
+        </div>
+
+        <a href="../index.html" class="back">← Volver a la invitación principal</a>
+    </div>
+</body>
+</html>
