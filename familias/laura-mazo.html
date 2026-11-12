@@ -19,7 +19,6 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         html { scroll-behavior: smooth; }
 
         body {
@@ -41,11 +40,7 @@
             justify-content: center;
             transition: opacity 0.9s ease, visibility 0.9s;
         }
-        .splash.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        .splash.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .splash-butterfly {
             font-size: 3.5rem;
             animation: flutter 2.5s ease-in-out infinite;
@@ -97,25 +92,29 @@
             letter-spacing: 1px;
         }
 
-        /* ===== SPOTIFY OCULTO ===== */
-        .spotify-frame {
+        /* ===== SPOTIFY PLAYER FIXED ===== */
+        .spotify-bar {
             position: fixed;
-            bottom: -200px;
-            left: -200px;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 900;
+            background: rgba(61, 46, 74, 0.95);
+            padding: 0;
+            transform: translateY(100%);
+            transition: transform 0.6s ease;
+        }
+        .spotify-bar.active { transform: translateY(0); }
+        .spotify-bar iframe {
+            display: block;
+            border: none;
+            width: 100%;
         }
 
         /* ===== CONTENIDO ===== */
-        .content {
-            opacity: 0;
-            transition: opacity 1.2s ease 0.3s;
-        }
+        .content { opacity: 0; transition: opacity 1.2s ease 0.3s; }
         .content.visible { opacity: 1; }
 
-        /* Mariposas de fondo */
         .bfly {
             position: fixed;
             pointer-events: none;
@@ -139,7 +138,7 @@
             z-index: 1;
             max-width: 560px;
             margin: 0 auto;
-            padding: 0 1.4rem;
+            padding: 0 1.4rem 120px;
         }
 
         /* --- HERO --- */
@@ -187,10 +186,7 @@
         }
 
         /* --- SECCIONES --- */
-        section {
-            padding: 4rem 0;
-            text-align: center;
-        }
+        section { padding: 4rem 0; text-align: center; }
         .sec-label {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
@@ -207,7 +203,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Separador */
         .sep {
             display: flex;
             align-items: center;
@@ -215,12 +210,7 @@
             gap: 1rem;
             padding: 1rem 0;
         }
-        .sep::before, .sep::after {
-            content: '';
-            width: 70px;
-            height: 1px;
-            background: var(--gold);
-        }
+        .sep::before, .sep::after { content: ''; width: 70px; height: 1px; background: var(--gold); }
         .sep span { color: var(--gold); font-size: 0.9rem; }
 
         /* --- FAMILIA --- */
@@ -274,10 +264,7 @@
             border-radius: 18px;
             overflow: hidden;
         }
-        .d-row {
-            background: var(--white);
-            padding: 1.5rem 1.2rem;
-        }
+        .d-row { background: var(--white); padding: 1.5rem 1.2rem; }
         .d-row .k {
             font-size: 0.65rem;
             letter-spacing: 3px;
@@ -285,16 +272,8 @@
             color: var(--gold);
             margin-bottom: 0.4rem;
         }
-        .d-row .v {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.25rem;
-            color: var(--dark);
-        }
-        .d-row .sub {
-            font-size: 0.8rem;
-            color: var(--muted);
-            margin-top: 0.2rem;
-        }
+        .d-row .v { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--dark); }
+        .d-row .sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
 
         .map-link {
             display: inline-flex;
@@ -311,17 +290,10 @@
             text-transform: uppercase;
             transition: all 0.3s;
         }
-        .map-link:hover {
-            background: var(--deep);
-            color: var(--white);
-        }
+        .map-link:hover { background: var(--deep); color: var(--white); }
 
         /* --- DRESS --- */
-        .dress-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
+        .dress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .dress-box {
             background: var(--white);
             border: 1px solid rgba(201, 167, 224, 0.35);
@@ -366,15 +338,8 @@
             color: var(--muted);
             margin-bottom: 1.2rem;
         }
-        .spotify-embed {
-            border-radius: 14px;
-            overflow: hidden;
-        }
-        .spotify-embed iframe {
-            border: none;
-            border-radius: 14px;
-            width: 100%;
-        }
+        .spotify-embed { border-radius: 14px; overflow: hidden; }
+        .spotify-embed iframe { border: none; border-radius: 14px; width: 100%; }
 
         /* --- CONFIRMACIÓN --- */
         .confirm-box {
@@ -395,10 +360,7 @@
             line-height: 1.7;
             margin-bottom: 1.8rem;
         }
-        .confirm-box .desc strong {
-            color: var(--deep);
-            font-weight: 500;
-        }
+        .confirm-box .desc strong { color: var(--deep); font-weight: 500; }
         .wa-btn {
             display: inline-block;
             background: var(--deep);
@@ -412,27 +374,12 @@
             transition: all 0.3s;
             box-shadow: 0 8px 30px rgba(155, 123, 184, 0.35);
         }
-        .wa-btn:hover {
-            background: var(--lilac);
-            transform: translateY(-3px);
-        }
-        .deadline {
-            margin-top: 1.3rem;
-            font-size: 0.75rem;
-            color: var(--muted);
-            letter-spacing: 1px;
-        }
+        .wa-btn:hover { background: var(--lilac); transform: translateY(-3px); }
+        .deadline { margin-top: 1.3rem; font-size: 0.75rem; color: var(--muted); letter-spacing: 1px; }
 
         /* --- SOBRES --- */
-        .envelopes {
-            text-align: center;
-            padding: 2rem 0;
-        }
-        .envelopes .heart {
-            font-size: 1.6rem;
-            color: var(--deep);
-            margin-bottom: 0.6rem;
-        }
+        .envelopes { text-align: center; padding: 2rem 0; }
+        .envelopes .heart { font-size: 1.6rem; color: var(--deep); margin-bottom: 0.6rem; }
         .envelopes p {
             font-family: 'Cormorant Garamond', serif;
             font-style: italic;
@@ -441,46 +388,28 @@
         }
 
         /* --- FOOTER --- */
-        footer {
-            text-align: center;
-            padding: 3rem 0 2.5rem;
-            color: var(--muted);
-        }
-        footer .b {
-            font-size: 1.6rem;
-            display: block;
-            margin-bottom: 0.6rem;
-            animation: flutter 3s ease-in-out infinite;
-        }
-        footer .sig {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-size: 1.05rem;
-        }
-        footer .sig strong {
-            color: var(--deep);
-            font-weight: 500;
-        }
-        footer .small {
-            font-size: 0.7rem;
-            margin-top: 0.6rem;
-            letter-spacing: 2px;
-        }
+        footer { text-align: center; padding: 3rem 0 2.5rem; color: var(--muted); }
+        footer .b { font-size: 1.6rem; display: block; margin-bottom: 0.6rem; animation: flutter 3s ease-in-out infinite; }
+        footer .sig { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.05rem; }
+        footer .sig strong { color: var(--deep); font-weight: 500; }
+        footer .small { font-size: 0.7rem; margin-top: 0.6rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla de entrada (dispara la música) -->
+    <!-- Pantalla de entrada -->
     <div class="splash" id="splash">
         <div class="splash-butterfly">🦋</div>
-        <h1>María Jose</h1>
+        <h1>Maríajose</h1>
         <p>Mis XV Años</p>
         <button class="enter-btn" id="enterBtn">Abrir invitación</button>
         <div class="splash-note">Con música de fondo ✦</div>
     </div>
 
-    <!-- Spotify embebido (se carga al entrar) -->
-    <div class="spotify-frame" id="spotifyFrame"></div>
+    <!-- Spotify player fijo abajo -->
+    <div class="spotify-bar" id="spotifyBar">
+        <iframe id="spotifyIframe" src="about:blank" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
 
     <!-- Mariposas fondo -->
     <div class="bfly">🦋</div>
@@ -496,15 +425,15 @@
             <!-- HERO -->
             <div class="hero">
                 <div class="eyebrow">— para ti —</div>
-                <h1>María Jose</h1>
+                <h1>Maríajose</h1>
                 <div class="years">MIS XV AÑOS</div>
                 <div class="arrow">↓</div>
             </div>
 
-            <!-- FAMILIA -->
+            <!-- INVITADOS -->
             <section>
                 <div class="sec-label">nuestra invitación</div>
-                <h2 class="sec-title">Para Laura Mazo</h2>
+                <h2 class="sec-title">Para</h2>
                 <div class="fam-card">
                     <div class="fam-label">Invitados especiales</div>
                     <div class="names"><span class="name">Laura Mazo</span></div>
@@ -566,7 +495,7 @@
                 <div class="music-box">
                     <div class="note">♪ Esta canción suena mientras lees tu invitación ♪</div>
                     <div class="spotify-embed">
-                        <iframe src="https://open.spotify.com/embed/track/1RsBgR6T1Put9AD0qPl3Cm?autoplay=1" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <iframe src="https://open.spotify.com/embed/track/1RsBgR6T1Put9AD0qPl3Cm" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                     </div>
                 </div>
             </section>
@@ -584,10 +513,10 @@
                 <div class="confirm-box">
                     <div class="ask">¿Nos acompañas?</div>
                     <div class="desc">
-                        Confirma la asistencia de <strong>Laura Mazo</strong>
-                        para que podamos preparar todo con mucho cariño.
+                        Estaríamos muy felices de contar contigo en esta noche tan especial.<br><br>
+                        Confirma la asistencia de <strong>Laura Mazo</strong> y ayúdanos a preparar todo con mucho cariño.
                     </div>
-                    <a class="wa-btn" href="https://wa.me/573017818322?text=Hola%20Maria%20Jose%21%20Soy%20Laura%20Mazo%20y%20confirmamos%20asistencia%20a%20tus%20XV%20Anos.%20Nos%20vemos%20el%2018%20de%20diciembre%21" target="_blank">
+                    <a class="wa-btn" href="https://wa.me/573017818322?text=🦋%20Hola%20María%20Jose%21%20Soy%20Laura%20Mazo%20y%20confirmamos%20nuestra%20asistencia%20a%20tus%20XV%20Años%2E%20💜%20Nos%20vemos%20el%20viernes%2018%20de%20diciembre%21%20🎉" target="_blank">
                         Confirmar asistencia
                     </a>
                     <div class="deadline">Por favor confirma antes del 1 de diciembre</div>
@@ -597,7 +526,7 @@
             <!-- FOOTER -->
             <footer>
                 <span class="b">🦋</span>
-                <div class="sig">Con amor, <strong>María Jose</strong></div>
+                <div class="sig">Con amor, <strong>Maríajose</strong></div>
                 <div class="small">MIS XV AÑOS · 18.12.2026</div>
             </footer>
 
@@ -606,9 +535,12 @@
 
     <script>
         document.getElementById('enterBtn').addEventListener('click', function() {
-            // Cargar Spotify con autoplay
-            var frame = document.getElementById('spotifyFrame');
-            frame.innerHTML = '<iframe src="https://open.spotify.com/embed/track/1RsBgR6T1Put9AD0qPl3Cm?autoplay=1" width="1" height="1" allow="autoplay; encrypted-media" frameborder="0"></iframe>';
+            // Cargar Spotify con autoplay al hacer clic (interacción del usuario)
+            var iframe = document.getElementById('spotifyIframe');
+            iframe.src = "https://open.spotify.com/embed/track/1RsBgR6T1Put9AD0qPl3Cm?autoplay=1";
+
+            // Mostrar barra de música
+            document.getElementById('spotifyBar').classList.add('active');
 
             // Ocultar splash y mostrar contenido
             document.getElementById('splash').classList.add('hidden');
