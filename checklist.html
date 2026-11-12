@@ -169,49 +169,6 @@
         }
         .member:last-child { border-bottom: none; }
 
-        .check-wrapper {
-            position: relative;
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-        }
-        .check-wrapper input {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-            z-index: 1;
-        }
-        .checkmark {
-            position: absolute;
-            inset: 0;
-            border: 2px solid rgba(201, 167, 224, 0.5);
-            border-radius: 7px;
-            background: var(--white);
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .checkmark::after {
-            content: '✓';
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s;
-        }
-        .check-wrapper input:checked + .checkmark {
-            background: var(--green);
-            border-color: var(--green);
-        }
-        .check-wrapper input:checked + .checkmark::after {
-            opacity: 1;
-            transform: scale(1);
-        }
-
         .member-info { flex: 1; }
         .member-name {
             font-size: 0.95rem;
@@ -225,39 +182,52 @@
         .member-status.yes { color: var(--green); }
         .member-status.no { color: var(--red); }
 
-        /* Toggle switch */
-        .toggle {
-            position: relative;
-            width: 44px;
-            height: 24px;
+        /* Dos cuadritos a la derecha */
+        .checks {
+            display: flex;
+            gap: 0.5rem;
             flex-shrink: 0;
         }
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+        .cbox {
+            position: relative;
+            width: 32px;
+            height: 32px;
         }
-        .slider {
+        .cbox input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1;
+        }
+        .cbox .face {
             position: absolute;
             inset: 0;
-            background: #D4C5E0;
-            border-radius: 24px;
-            cursor: pointer;
-            transition: 0.3s;
+            border: 2px solid rgba(201, 167, 224, 0.45);
+            border-radius: 8px;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.25s;
+            color: transparent;
         }
-        .slider::before {
-            content: '';
-            position: absolute;
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.3s;
+        .cbox.yes input:checked + .face {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
         }
-        .toggle input:checked + .slider { background: var(--green); }
-        .toggle input:checked + .slider::before { transform: translateX(20px); }
+        .cbox.no input:checked + .face {
+            background: var(--red);
+            border-color: var(--red);
+            color: white;
+        }
+        .cbox input:hover + .face {
+            border-color: var(--deep);
+        }
 
         /* Reset button */
         .reset-row {
@@ -457,18 +427,20 @@
                     const statusClass = s === 'yes' ? 'yes' : s === 'no' ? 'no' : '';
                     membersHtml += `
                         <div class="member">
-                            <label class="check-wrapper">
-                                <input type="checkbox" data-member="${m}" ${s === 'yes' ? 'checked' : ''}>
-                                <span class="checkmark"></span>
-                            </label>
                             <div class="member-info">
                                 <div class="member-name">${m}</div>
                                 <div class="member-status ${statusClass}">${statusText}</div>
                             </div>
-                            <label class="toggle" title="Marcar como no asiste">
-                                <input type="checkbox" data-no-member="${m}" ${s === 'no' ? 'checked' : ''}>
-                                <span class="slider"></span>
-                            </label>
+                            <div class="checks">
+                                <label class="cbox yes" title="Asiste">
+                                    <input type="checkbox" data-member="${m}" ${s === 'yes' ? 'checked' : ''}>
+                                    <span class="face">✓</span>
+                                </label>
+                                <label class="cbox no" title="No asiste">
+                                    <input type="checkbox" data-no-member="${m}" ${s === 'no' ? 'checked' : ''}>
+                                    <span class="face">✗</span>
+                                </label>
+                            </div>
                         </div>
                     `;
                 });
