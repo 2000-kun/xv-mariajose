@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist - XV Años Maríajose</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg: #F6F1FB;
+            --deep: #9B7BB8;
+            --gold: #C9A96E;
+            --dark: #3D2E4A;
+            --muted: #7A6A85;
+            --white: #FFFFFF;
+            --green: #5B9A6F;
+            --red: #C46B6B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem 1.4rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 1.5rem 0;
+        }
+        header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+            font-size: 2.2rem;
+            color: var(--deep);
+        }
+        header p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+        .stat {
+            background: var(--white);
+            border: 1px solid rgba(201, 167, 224, 0.35);
+            border-radius: 14px;
+            padding: 1.1rem 0.6rem;
+            text-align: center;
+        }
+        .stat .num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--deep);
+        }
+        .stat .lbl {
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 0.2rem;
+        }
+        .stat.yes .num { color: var(--green); }
+        .stat.no .num { color: var(--red); }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: var(--white);
+            border: 1.5px solid rgba(201, 167, 224, 0.4);
+            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .filter-btn.active {
+            background: var(--deep);
+            border-color: var(--deep);
+            color: var(--white);
+        }
+
+        /* Search */
+        .search {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 1.5px solid rgba(201, 167, 224, 0.4);
+            border-radius: 14px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            background: var(--white);
+            color: var(--dark);
+            margin-bottom: 1.2rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search:focus { border-color: var(--deep); }
+        .search::placeholder { color: #B0A3BC; }
+
+        /* List */
+        .group {
+            background: var(--white);
+            border: 1px solid rgba(201, 167, 224, 0.3);
+            border-radius: 16px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+        }
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        .group-header:hover { background: rgba(201, 167, 224, 0.06); }
+        .group-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        .group-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 50px;
+            background: rgba(201, 167, 224, 0.15);
+            color: var(--deep);
+            font-weight: 500;
+        }
+        .group-badge.all-yes { background: rgba(91, 154, 111, 0.15); color: var(--green); }
+        .group-badge.all-no { background: rgba(196, 107, 107, 0.15); color: var(--red); }
+
+        .members {
+            display: none;
+            border-top: 1px solid rgba(201, 167, 224, 0.2);
+        }
+        .members.open { display: block; }
+
+        .member {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.85rem 1.2rem;
+            border-bottom: 1px solid rgba(201, 167, 224, 0.12);
+        }
+        .member:last-child { border-bottom: none; }
+
+        .check-wrapper {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .check-wrapper input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 1;
+        }
+        .checkmark {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(201, 167, 224, 0.5);
+            border-radius: 7px;
+            background: var(--white);
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .checkmark::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s;
+        }
+        .check-wrapper input:checked + .checkmark {
+            background: var(--green);
+            border-color: var(--green);
+        }
+        .check-wrapper input:checked + .checkmark::after {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .member-info { flex: 1; }
+        .member-name {
+            font-size: 0.95rem;
+            color: var(--dark);
+        }
+        .member-status {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 0.1rem;
+        }
+        .member-status.yes { color: var(--green); }
+        .member-status.no { color: var(--red); }
+
+        /* Toggle switch */
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #D4C5E0;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .slider::before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle input:checked + .slider { background: var(--green); }
+        .toggle input:checked + .slider::before { transform: translateX(20px); }
+
+        /* Reset button */
+        .reset-row {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-bottom: 2rem;
+        }
+        .reset-btn {
+            background: none;
+            border: 1.5px solid rgba(196, 107, 107, 0.4);
+            color: var(--red);
+            padding: 0.6rem 1.6rem;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .reset-btn:hover {
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
+        }
+
+        .save-note {
+            text-align: center;
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🦋 Checklist de Asistencia</h1>
+            <p>XV Años Maríajose · 18 de diciembre de 2026</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="num" id="totalNum">0</div>
+                <div class="lbl">Total</div>
+            </div>
+            <div class="stat yes">
+                <div class="num" id="yesNum">0</div>
+                <div class="lbl">Asisten</div>
+            </div>
+            <div class="stat no">
+                <div class="num" id="noNum">0</div>
+                <div class="lbl">No asisten</div>
+            </div>
+        </div>
+
+        <input type="text" class="search" id="search" placeholder="🔍 Buscar persona...">
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="pending">Sin responder</button>
+            <button class="filter-btn" data-filter="yes">Asisten</button>
+            <button class="filter-btn" data-filter="no">No asisten</button>
+        </div>
+
+        <div id="list"></div>
+
+        <div class="reset-row">
+            <button class="reset-btn" id="resetBtn">Limpiar todo</button>
+            <div class="save-note">Los cambios se guardan automáticamente en este dispositivo</div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATOS =====
+        const GROUPS = [
+            { name: "Sara, Paola y Wilson", members: ["Sara", "Paola", "Wilson"] },
+            { name: "Mariajose, Juan Andres, John Jairo y Omaira", members: ["Mariajose R", "Juan Andres R", "John Jairo R", "Omaira Z"] },
+            { name: "Nicolas, Amanda y Paulina", members: ["Nicolas", "Amanda", "Paulina"] },
+            { name: "Camilo y Anyi", members: ["Camilo", "Anyi"] },
+            { name: "Vanessa, Diego y Leyla", members: ["Vanessa", "Diego", "Leyla"] },
+            { name: "Alonso y Yesica", members: ["Alonso", "Yesica"] },
+            { name: "Leidy, Brayan y Celeste", members: ["Leidy", "Brayan", "Celeste"] },
+            { name: "Yuri, Edwin, Valeria y Mariangel", members: ["Yuri", "Edwin", "Valeria", "Mariangel"] },
+            { name: "Martha, Hernan y Juliana", members: ["Martha", "Hernan", "Juliana"] },
+            { name: "Sindy, David, Miguel Angel y Juan Jose", members: ["Sindy", "David", "Miguel Angel", "Juan Jose"] },
+            { name: "Edilma y Manuel", members: ["Edilma", "Manuel"] },
+            { name: "Santiago, Susana y Luciana Ramirez", members: ["Santiago Ramirez", "Susana Ramirez", "Luciana Ramirez"] },
+            { name: "Yefry, Antony y Luisa", members: ["Yefry", "Antony", "Luisa"] },
+            { name: "Diana, Robert, Hillary y Laura", members: ["Diana", "Robert", "Hillary", "Laura"] },
+            { name: "Edwin Ramirez y Enilsa", members: ["Edwin Ramirez", "Enilsa"] },
+            { name: "Fernando y Amanda", members: ["Fernando", "Amanda"] },
+            { name: "Oscar y Patricia", members: ["Oscar", "Patricia"] },
+            { name: "Jorge y Adela", members: ["Jorge", "Adela"] },
+            { name: "Jaime y Cristina", members: ["Jaime", "Cristina"] },
+            { name: "Ximena y Mauricio", members: ["Ximena", "Mauricio"] },
+            { name: "Jairo, Yurany y Salome", members: ["Jairo", "Yurany", "Salome"] },
+            { name: "Yuliana, Edwin, Samuel y Juan David", members: ["Yuliana", "Edwin", "Samuel", "Juan David"] },
+            { name: "Sandra, Alex, Karen y Samuel", members: ["Sandra", "Alex", "Karen", "Samuel"] },
+            { name: "Rosa, Carolina y Mariana", members: ["Rosa", "Carolina", "Mariana"] },
+            { name: "Estefa y Michell", members: ["Estefa", "Michell"] },
+            { name: "Orfa y Emanuel", members: ["Orfa", "Emanuel"] },
+            { name: "Daniel y Laura", members: ["Daniel", "Laura"] },
+            { name: "Doña Martha y Don Fernando", members: ["Doña Martha", "Don Fernando"] },
+            { name: "Milton y Edison", members: ["Milton", "Edison"] },
+            { name: "Anderson y Sofia", members: ["Anderson", "Sofia"] },
+            { name: "Karen, Cristofer y Matias", members: ["Karen", "Cristofer", "Matias"] },
+            { name: "Amigas de mamá", members: ["Amigas de mamá"] },
+            { name: "Claudia y Jose Manuel", members: ["Claudia", "Jose Manuel"] },
+            { name: "Sandra, Mauricio y Miguel", members: ["Sandra", "Mauricio", "Miguel"] },
+            { name: "Elena y Flaco", members: ["Elena", "Flaco"] },
+            { name: "Horacio, Adriana y Camila", members: ["Horacio", "Adriana", "Camila"] },
+            { name: "Irma", members: ["Irma"] },
+            { name: "Laura Mazo", members: ["Laura Mazo"] },
+            { name: "Miguel Angel Vargas", members: ["Miguel Angel Vargas"] },
+            { name: "Valeria Miranda", members: ["Valeria Miranda"] },
+            { name: "Yiseth", members: ["Yiseth"] },
+            { name: "Alison", members: ["Alison"] },
+            { name: "Salome Betancourt", members: ["Salome Betancourt"] },
+            { name: "Silvana Arango", members: ["Silvana Arango"] },
+            { name: "Nicole Rivera", members: ["Nicole Rivera"] },
+            { name: "Sheyla Bedoya", members: ["Sheyla Bedoya"] },
+            { name: "Manuela Quintero", members: ["Manuela Quintero"] },
+            { name: "Luciana Alzate", members: ["Luciana Alzate"] },
+            { name: "Isabela Franco", members: ["Isabela Franco"] },
+            { name: "Quiara Quintero", members: ["Quiara Quintero"] },
+            { name: "Santiago Quintero", members: ["Santiago Quintero"] },
+            { name: "Juan Andres Villa", members: ["Juan Andres Villa"] },
+            { name: "Jeronimo Valencia", members: ["Jeronimo Valencia"] },
+            { name: "Simon Ramirez", members: ["Simon Ramirez"] },
+            { name: "Isabella Serrano", members: ["Isabella Serrano"] },
+            { name: "Doña Miriam", members: ["Doña Miriam"] },
+            { name: "Sebastian", members: ["Sebastian"] },
+            { name: "Alexia", members: ["Alexia"] },
+        ];
+
+        // ===== ESTADO (localStorage) =====
+        const STORAGE_KEY = 'xv_checklist_2026';
+
+        function loadState() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            } catch { return {}; }
+        }
+
+        function saveState(state) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        let state = loadState();
+        let currentFilter = 'all';
+        let searchText = '';
+
+        // ===== RENDER =====
+        function render() {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+
+            let total = 0, yes = 0, no = 0;
+
+            GROUPS.forEach((group, gi) => {
+                // Filter members
+                const visibleMembers = group.members.filter(m => {
+                    if (searchText && !m.toLowerCase().includes(searchText)) return false;
+                    const s = state[m] || 'pending';
+                    if (currentFilter === 'yes' && s !== 'yes') return false;
+                    if (currentFilter === 'no' && s !== 'no') return false;
+                    if (currentFilter === 'pending' && s !== 'pending') return false;
+                    return true;
+                });
+
+                if (visibleMembers.length === 0) return;
+
+                // Count stats (all members, not just visible)
+                group.members.forEach(m => {
+                    total++;
+                    const s = state[m] || 'pending';
+                    if (s === 'yes') yes++;
+                    else if (s === 'no') no++;
+                });
+
+                // Group badge
+                const statuses = group.members.map(m => state[m] || 'pending');
+                const allYes = statuses.every(s => s === 'yes');
+                const allNo = statuses.every(s => s === 'no');
+                let badgeClass = '';
+                let badgeText = group.members.length + (group.members.length === 1 ? ' persona' : ' personas');
+                if (allYes) { badgeClass = 'all-yes'; badgeText = '✓ Todos asisten'; }
+                else if (allNo) { badgeClass = 'all-no'; badgeText = '✗ Ninguno asiste'; }
+
+                const groupEl = document.createElement('div');
+                groupEl.className = 'group';
+
+                let membersHtml = '';
+                visibleMembers.forEach(m => {
+                    const s = state[m] || 'pending';
+                    const statusText = s === 'yes' ? 'Asiste' : s === 'no' ? 'No asiste' : 'Sin responder';
+                    const statusClass = s === 'yes' ? 'yes' : s === 'no' ? 'no' : '';
+                    membersHtml += `
+                        <div class="member">
+                            <label class="check-wrapper">
+                                <input type="checkbox" data-member="${m}" ${s === 'yes' ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                            </label>
+                            <div class="member-info">
+                                <div class="member-name">${m}</div>
+                                <div class="member-status ${statusClass}">${statusText}</div>
+                            </div>
+                            <label class="toggle" title="Marcar como no asiste">
+                                <input type="checkbox" data-no-member="${m}" ${s === 'no' ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    `;
+                });
+
+                groupEl.innerHTML = `
+                    <div class="group-header" data-group="${gi}">
+                        <span class="group-name">${group.name}</span>
+                        <span class="group-badge ${badgeClass}">${badgeText}</span>
+                    </div>
+                    <div class="members" id="members-${gi}">
+                        ${membersHtml}
+                    </div>
+                `;
+
+                list.appendChild(groupEl);
+            });
+
+            // Update stats
+            document.getElementById('totalNum').textContent = total;
+            document.getElementById('yesNum').textContent = yes;
+            document.getElementById('noNum').textContent = no;
+
+            // Attach events
+            document.querySelectorAll('[data-member]').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const m = this.dataset.member;
+                    if (this.checked) {
+                        state[m] = 'yes';
+                        // Uncheck no toggle
+                        const noCb = document.querySelector(`[data-no-member="${m}"]`);
+                        if (noCb) noCb.checked = false;
+                    } else {
+                        state[m] = 'pending';
+                    }
+                    saveState(state);
+                    render();
+                });
+            });
+
+            document.querySelectorAll('[data-no-member]').forEach(cb => {
+                cb.addEventListener('change', function() {
+                    const m = this.dataset.noMember;
+                    if (this.checked) {
+                        state[m] = 'no';
+                    } else {
+                        state[m] = 'pending';
+                    }
+                    saveState(state);
+                    render();
+                });
+            });
+
+            document.querySelectorAll('.group-header').forEach(h => {
+                h.addEventListener('click', function() {
+                    const gi = this.dataset.group;
+                    const members = document.getElementById('members-' + gi);
+                    members.classList.toggle('open');
+                });
+            });
+        }
+
+        // ===== FILTERS =====
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                render();
+            });
+        });
+
+        // ===== SEARCH =====
+        document.getElementById('search').addEventListener('input', function() {
+            searchText = this.value.toLowerCase();
+            render();
+        });
+
+        // ===== RESET =====
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('¿Limpiar todos los checks? Esta acción no se puede deshacer.')) {
+                state = {};
+                saveState(state);
+                render();
+            }
+        });
+
+        // ===== INIT =====
+        render();
+    </script>
+</body>
+</html>
