@@ -432,9 +432,34 @@
             try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; }
         }
 
+        // Clave única: familia + nombre (evita marcar homónimos)
+        function memberKey(gi, name) { return 'g' + gi + '::' + name; }
+
+        // Contar cuántas veces aparece cada nombre
+        function nameCounts() {
+            const c = {};
+            GROUPS.forEach(g => g.members.forEach(m => { c[m] = (c[m] || 0) + 1; }));
+            return c;
+        }
+
+        // Migrar claves antiguas (solo nombres) a claves únicas.
+        // Los nombres repetidos se descartan (hay que volver a marcarlos).
+        function migrateState(old) {
+            const counts = nameCounts();
+            const out = {};
+            Object.keys(old || {}).forEach(k => {
+                if (k.includes('::')) { out[k] = old[k]; return; }
+                if (counts[k] === 1) {
+                    const gi = GROUPS.findIndex(g => g.members.includes(k));
+                    if (gi >= 0) out[memberKey(gi, k)] = old[k];
+                }
+            });
+            return out;
+        }
+
         function loadState() {
             try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+                return migrateState(JSON.parse(localStorage.getItem(STORAGE_KEY)) || {});
             } catch { return {}; }
         }
 
@@ -523,10 +548,11 @@
                 return;
             }
             remoteSha = sha;
-            const merged = mergeStates(local, remote);
+            const remoteMigrated = migrateState(remote);
+            const merged = mergeStates(local, remoteMigrated);
             state = merged;
             saveState(state);
-            if (JSON.stringify(merged) !== JSON.stringify(remote || {})) {
+            if (JSON.stringify(merged) !== JSON.stringify(remoteMigrated)) {
                 await pushRemote(state, sha);
                 const again = await fetchRemote();
                 remoteSha = again.sha;
@@ -542,7 +568,7 @@
                 const { data: remote, sha, auth } = await fetchRemote();
                 if (!auth) { setSync('🔑 Token inválido'); return; }
                 remoteSha = sha;
-                state = mergeStates(state, remote);
+                state = mergeStates(state, migrateState(remote));
                 saveState(state);
                 const ok = await pushRemote(state, sha);
                 setSync(ok ? '☁️ Sincronizado' : '⚠️ Error al sincronizar');
@@ -589,13 +615,13 @@
                 // Count stats (all members, not just visible)
                 group.members.forEach(m => {
                     total++;
-                    const s = state[m] || 'pending';
+                    const s = state[memberKey(gi, m)] || 'pending';
                     if (s === 'yes') yes++;
                     else if (s === 'no') no++;
                 });
 
                 // Group badge
-                const statuses = group.members.map(m => state[m] || 'pending');
+                const statuses = group.members.map(m => state[memberKey(gi, m)] || 'pending');
                 const allYes = statuses.every(s => s === 'yes');
                 const allNo = statuses.every(s => s === 'no');
                 let badgeClass = '';
@@ -608,7 +634,8 @@
 
                 let membersHtml = '';
                 visibleMembers.forEach(m => {
-                    const s = state[m] || 'pending';
+                    const key = memberKey(gi, m);
+                    const s = state[key] || 'pending';
                     const statusText = s === 'yes' ? 'Asiste' : s === 'no' ? 'No asiste' : 'Sin responder';
                     const statusClass = s === 'yes' ? 'yes' : s === 'no' ? 'no' : '';
                     membersHtml += `
@@ -619,11 +646,11 @@
                             </div>
                             <div class="checks">
                                 <label class="cbox yes" title="Asiste">
-                                    <input type="checkbox" data-member="${m}" ${s === 'yes' ? 'checked' : ''}>
+                                    <input type="checkbox" data-member="${key}" ${s === 'yes' ? 'checked' : ''}>
                                     <span class="face">✓</span>
                                 </label>
                                 <label class="cbox no" title="No asiste">
-                                    <input type="checkbox" data-no-member="${m}" ${s === 'no' ? 'checked' : ''}>
+                                    <input type="checkbox" data-no-member="${key}" ${s === 'no' ? 'checked' : ''}>
                                     <span class="face">✗</span>
                                 </label>
                             </div>
