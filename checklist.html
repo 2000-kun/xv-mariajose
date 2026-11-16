@@ -259,6 +259,51 @@
             margin-top: 1rem;
             font-style: italic;
         }
+
+        /* Token setup */
+        .token-setup {
+            background: var(--white);
+            border: 1.5px solid rgba(201, 167, 224, 0.5);
+            border-radius: 16px;
+            padding: 1.4rem;
+            margin-bottom: 1.2rem;
+        }
+        .token-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--deep);
+            margin-bottom: 0.4rem;
+        }
+        .token-desc {
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 0.9rem;
+        }
+        .token-row { display: flex; gap: 0.5rem; }
+        .token-input {
+            flex: 1;
+            padding: 0.7rem 0.9rem;
+            border: 1.5px solid rgba(201, 167, 224, 0.4);
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .token-input:focus { border-color: var(--deep); }
+        .token-btn {
+            background: var(--deep);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0 1.4rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .token-btn:hover { background: var(--lilac); }
+        .token-error { color: var(--red); font-size: 0.78rem; margin-top: 0.5rem; }
+        .token-help { color: var(--muted); font-size: 0.7rem; margin-top: 0.7rem; }
     </style>
 </head>
 <body>
@@ -290,6 +335,17 @@
             <button class="filter-btn" data-filter="pending">Sin responder</button>
             <button class="filter-btn" data-filter="yes">Asisten</button>
             <button class="filter-btn" data-filter="no">No asisten</button>
+        </div>
+
+        <div id="tokenSetup" class="token-setup" style="display:none;">
+            <div class="token-title">🔑 Sincronización entre dispositivos</div>
+            <div class="token-desc">Pega tu token de GitHub una vez para que los cambios se compartan entre el celular y la PC. Se guarda solo en este dispositivo.</div>
+            <div class="token-row">
+                <input type="password" id="tokenInput" class="token-input" placeholder="ghp_...">
+                <button class="token-btn" onclick="saveToken()">Conectar</button>
+            </div>
+            <div class="token-error" id="tokenError"></div>
+            <div class="token-help">Crear token: github.com/settings/tokens/new → marca <b>repo</b> → Generate</div>
         </div>
 
         <div id="list"></div>
@@ -367,10 +423,14 @@
 
         // ===== ESTADO (localStorage + GitHub sync) =====
         const STORAGE_KEY = 'xv_checklist_2026';
-        const GH_TOKEN = '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';
+        const TOKEN_KEY = 'xv_gh_token';
         const GH_REPO = '2000-kun/xv-mariajose';
         const GH_FILE = 'checklist-data.json';
         const GH_API = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
+
+        function ghToken() {
+            try { return localStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; }
+        }
 
         function loadState() {
             try {
@@ -382,34 +442,43 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
         }
 
+        function authHeaders() {
+            return {
+                'Authorization': 'token ' + ghToken(),
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            };
+        }
+
         // GET remoto
         async function fetchRemote() {
+            if (!ghToken()) return { data: null, sha: null, auth: false };
             try {
-                const r = await fetch(GH_API, {
-                    headers: { 'Authorization': 'token ' + GH_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
-                });
-                if (r.status === 404) return { data: null, sha: null };
-                if (!r.ok) return { data: null, sha: null };
+                const r = await fetch(GH_API, { headers: authHeaders() });
+                if (r.status === 401) return { data: null, sha: null, auth: false };
+                if (r.status === 404) return { data: null, sha: null, auth: true };
+                if (!r.ok) return { data: null, sha: null, auth: true };
                 const j = await r.json();
-                const content = JSON.parse(atob(j.content.replace(/\n/g, '')));
-                return { data: content, sha: j.sha };
-            } catch { return { data: null, sha: null }; }
+                const bytes = Uint8Array.from(atob(j.content.replace(/\n/g, '')), c => c.charCodeAt(0));
+                const content = JSON.parse(new TextDecoder().decode(bytes));
+                return { data: content, sha: j.sha, auth: true };
+            } catch { return { data: null, sha: null, auth: true }; }
         }
 
         // PUT remoto
         async function pushRemote(obj, sha) {
+            if (!ghToken()) return false;
             try {
                 const body = JSON.stringify(obj, null, 2);
+                const bytes = new TextEncoder().encode(body);
+                let bin = '';
+                bytes.forEach(b => bin += String.fromCharCode(b));
                 const r = await fetch(GH_API, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': 'token ' + GH_TOKEN,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
+                    headers: authHeaders(),
                     body: JSON.stringify({
                         message: 'checklist sync ' + new Date().toISOString(),
-                        content: btoa(unescape(encodeURIComponent(body))),
+                        content: btoa(bin),
                         sha: sha || undefined
                     })
                 });
@@ -431,9 +500,28 @@
         let remoteSha = null;
         let syncing = false;
 
+        function setSync(msg) {
+            const el = document.getElementById('syncStatus');
+            if (el) el.textContent = msg;
+        }
+
         async function syncInitial() {
+            if (!ghToken()) {
+                document.getElementById('tokenSetup').style.display = 'block';
+                setSync('🔑 Sin sincronizar');
+                render();
+                return;
+            }
             const local = loadState();
-            const { data: remote, sha } = await fetchRemote();
+            const { data: remote, sha, auth } = await fetchRemote();
+            if (!auth) {
+                document.getElementById('tokenSetup').style.display = 'block';
+                document.getElementById('tokenInput').value = ghToken();
+                document.getElementById('tokenError').textContent = 'El token no es válido. Pega uno nuevo.';
+                setSync('🔑 Token inválido');
+                render();
+                return;
+            }
             remoteSha = sha;
             const merged = mergeStates(local, remote);
             state = merged;
@@ -444,23 +532,34 @@
                 remoteSha = again.sha;
             }
             render();
-            document.getElementById('syncStatus').textContent = '☁️ Sincronizado';
+            setSync('☁️ Sincronizado');
         }
 
         async function syncPush() {
-            if (syncing) return;
+            if (syncing || !ghToken()) return;
             syncing = true;
             try {
-                const { data: remote, sha } = await fetchRemote();
+                const { data: remote, sha, auth } = await fetchRemote();
+                if (!auth) { setSync('🔑 Token inválido'); return; }
                 remoteSha = sha;
                 state = mergeStates(state, remote);
                 saveState(state);
                 const ok = await pushRemote(state, sha);
-                document.getElementById('syncStatus').textContent = ok ? '☁️ Sincronizado' : '⚠️ Error al sincronizar';
+                setSync(ok ? '☁️ Sincronizado' : '⚠️ Error al sincronizar');
                 if (ok) render();
             } finally {
                 syncing = false;
             }
+        }
+
+        function saveToken() {
+            const v = document.getElementById('tokenInput').value.trim();
+            if (!v) return;
+            localStorage.setItem(TOKEN_KEY, v);
+            document.getElementById('tokenSetup').style.display = 'none';
+            document.getElementById('tokenError').textContent = '';
+            setSync('☁️ Conectando...');
+            syncInitial();
         }
 
         let state = loadState();
