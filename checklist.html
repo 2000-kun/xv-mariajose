@@ -296,7 +296,9 @@
 
         <div class="reset-row">
             <button class="reset-btn" id="resetBtn">Limpiar todo</button>
-            <div class="save-note">Los cambios se guardan automáticamente en este dispositivo</div>
+            <div class="save-note">
+                <span id="syncStatus">☁️ Cargando...</span> · Los cambios se sincronizan entre dispositivos
+            </div>
         </div>
     </div>
 
@@ -363,8 +365,12 @@
             { name: "Alexis", members: ["Alexis"] },
         ];
 
-        // ===== ESTADO (localStorage) =====
+        // ===== ESTADO (localStorage + GitHub sync) =====
         const STORAGE_KEY = 'xv_checklist_2026';
+        const GH_TOKEN = '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';
+        const GH_REPO = '2000-kun/xv-mariajose';
+        const GH_FILE = 'checklist-data.json';
+        const GH_API = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
 
         function loadState() {
             try {
@@ -372,8 +378,89 @@
             } catch { return {}; }
         }
 
-        function saveState(state) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        function saveState(s) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
+        }
+
+        // GET remoto
+        async function fetchRemote() {
+            try {
+                const r = await fetch(GH_API, {
+                    headers: { 'Authorization': 'token ' + GH_TOKEN, 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (r.status === 404) return { data: null, sha: null };
+                if (!r.ok) return { data: null, sha: null };
+                const j = await r.json();
+                const content = JSON.parse(atob(j.content.replace(/\n/g, '')));
+                return { data: content, sha: j.sha };
+            } catch { return { data: null, sha: null }; }
+        }
+
+        // PUT remoto
+        async function pushRemote(obj, sha) {
+            try {
+                const body = JSON.stringify(obj, null, 2);
+                const r = await fetch(GH_API, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': 'token ' + GH_TOKEN,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'checklist sync ' + new Date().toISOString(),
+                        content: btoa(unescape(encodeURIComponent(body))),
+                        sha: sha || undefined
+                    })
+                });
+                return r.ok;
+            } catch { return false; }
+        }
+
+        // Fusionar: gana lo que no esté "pending"; si ambos difieren gana el local (acción reciente)
+        function mergeStates(local, remote) {
+            const merged = Object.assign({}, remote || {});
+            Object.keys(local || {}).forEach(k => {
+                const l = local[k], r = merged[k];
+                if (l !== 'pending') merged[k] = l;
+                else if (!r) merged[k] = l;
+            });
+            return merged;
+        }
+
+        let remoteSha = null;
+        let syncing = false;
+
+        async function syncInitial() {
+            const local = loadState();
+            const { data: remote, sha } = await fetchRemote();
+            remoteSha = sha;
+            const merged = mergeStates(local, remote);
+            state = merged;
+            saveState(state);
+            if (JSON.stringify(merged) !== JSON.stringify(remote || {})) {
+                await pushRemote(state, sha);
+                const again = await fetchRemote();
+                remoteSha = again.sha;
+            }
+            render();
+            document.getElementById('syncStatus').textContent = '☁️ Sincronizado';
+        }
+
+        async function syncPush() {
+            if (syncing) return;
+            syncing = true;
+            try {
+                const { data: remote, sha } = await fetchRemote();
+                remoteSha = sha;
+                state = mergeStates(state, remote);
+                saveState(state);
+                const ok = await pushRemote(state, sha);
+                document.getElementById('syncStatus').textContent = ok ? '☁️ Sincronizado' : '⚠️ Error al sincronizar';
+                if (ok) render();
+            } finally {
+                syncing = false;
+            }
         }
 
         let state = loadState();
@@ -476,6 +563,7 @@
                         state[m] = 'pending';
                     }
                     saveState(state);
+                    syncPush();
                     render();
                 });
             });
@@ -489,6 +577,7 @@
                         state[m] = 'pending';
                     }
                     saveState(state);
+                    syncPush();
                     render();
                 });
             });
@@ -523,12 +612,14 @@
             if (confirm('¿Limpiar todos los checks? Esta acción no se puede deshacer.')) {
                 state = {};
                 saveState(state);
+                syncPush();
                 render();
             }
         });
 
         // ===== INIT =====
         render();
+        syncInitial();
     </script>
 </body>
 </html>
